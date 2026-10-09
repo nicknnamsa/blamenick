@@ -70,14 +70,14 @@ export function copiedLine(s) {
 // ---- Picture card (1080 × 1350, the shape Instagram likes) ----
 
 const C = {
-  plum: "#2E2440",
-  soft: "#6B5F80",
-  cream: "#FBF7F2",
-  lavender: "#DDD6F7",
-  blush: "#F7C9D4",
-  mint: "#C9EBDA",
-  sky: "#CDE3F7",
-  butter: "#FBEAB0",
+  night: "#ECE2D4",  // latte background
+  ink: "#2B2220",    // espresso
+  soft: "#7A6448",
+  chalk: "#FFFDF9",
+  manila: "#EFE3C6", // parchment case file
+  blood: "#9E3B2F",  // oxblood
+  tape: "#E8C15A",   // mustard, for the dots
+  steel: "#BCCBD8",
 };
 
 function wrap(ctx, text, maxWidth) {
@@ -101,7 +101,7 @@ function drawBody(ctx, x, y, scale) {
   ctx.save();
   ctx.translate(x, y);
   ctx.scale(scale, scale);
-  ctx.strokeStyle = C.plum;
+  ctx.strokeStyle = C.ink;
   ctx.lineWidth = 2;
   ctx.lineCap = "round";
   ctx.lineJoin = "round";
@@ -114,6 +114,25 @@ function drawBody(ctx, x, y, scale) {
   ctx.setLineDash([]);
   ctx.lineWidth = 1.4;
   ctx.stroke(new Path2D("M13 29l3 3M16 29l-3 3M20 29l3 3M23 29l-3 3"));
+  ctx.restore();
+}
+
+function drawDrop(ctx, x, y, size) {
+  const k = size / 32;
+  ctx.save();
+  ctx.translate(x, y);
+  ctx.scale(k, k);
+  ctx.fillStyle = C.blood;
+  ctx.strokeStyle = C.ink;
+  ctx.lineWidth = 2;
+  ctx.lineJoin = "round";
+  const drop = new Path2D("M12 2C12 2 3 13.5 3 20a9 9 0 0 0 18 0C21 13.5 12 2 12 2z");
+  ctx.fill(drop);
+  ctx.stroke(drop);
+  ctx.strokeStyle = C.chalk;
+  ctx.globalAlpha = 0.7;
+  ctx.lineCap = "round";
+  ctx.stroke(new Path2D("M8 20a4 4 0 0 0 3 4"));
   ctx.restore();
 }
 
@@ -132,10 +151,10 @@ export async function makeCard(s) {
   const solved = s.status === "solved";
   const cold = s.status === "gaveup";
 
-  // Background with a few pastel dots, like the confetti on a solve.
-  ctx.fillStyle = cold ? C.sky : solved ? C.mint : C.lavender;
+  // Latte background with a few dots, like the confetti on a solve.
+  ctx.fillStyle = C.night;
   ctx.fillRect(0, 0, W, H);
-  const dots = [C.blush, C.butter, C.cream, C.sky, C.lavender];
+  const dots = [C.blood, C.tape, C.chalk, C.steel, C.manila];
   for (let i = 0; i < 18; i++) {
     const a = (i * 137.5 * Math.PI) / 180;
     const r = 470 + (i % 3) * 40;
@@ -144,17 +163,18 @@ export async function makeCard(s) {
     ctx.fillStyle = dots[i % dots.length];
     ctx.fill();
     ctx.lineWidth = 3;
-    ctx.strokeStyle = C.plum;
+    ctx.strokeStyle = C.ink;
     ctx.stroke();
   }
 
   // The case file
   const cx = 90, cy = 110, cw = W - 180, ch = H - 220;
-  ctx.fillStyle = C.plum;
+  ctx.fillStyle = C.ink;
   ctx.beginPath();
   ctx.roundRect(cx, cy + 14, cw, ch, 56);
   ctx.fill();
-  ctx.fillStyle = C.cream;
+  ctx.strokeStyle = C.ink;
+  ctx.fillStyle = C.manila;
   ctx.beginPath();
   ctx.roundRect(cx, cy, cw, ch, 56);
   ctx.fill();
@@ -165,9 +185,10 @@ export async function makeCard(s) {
   ctx.fillStyle = C.soft;
   ctx.font = '800 34px "Nunito", sans-serif';
   ctx.fillText(`CASE ${s.caseNo}`, W / 2, cy + 100);
-  ctx.fillStyle = C.plum;
+  ctx.fillStyle = C.ink;
   ctx.font = '600 92px "Fraunces", serif';
   ctx.fillText("Killer Clues", W / 2, cy + 200);
+  drawDrop(ctx, W / 2 + ctx.measureText("Killer Clues").width / 2 + 10, cy + 136, 64);
 
   drawBody(ctx, W / 2 - 300, cy + 210, 5);
 
@@ -187,14 +208,14 @@ export async function makeCard(s) {
     ctx.font = '600 72px "Fraunces", serif';
     const label = s.rank;
     const bw = ctx.measureText(label).width + 100;
-    ctx.fillStyle = cold ? C.sky : C.blush;
+    ctx.fillStyle = cold ? C.steel : C.blood;
     ctx.beginPath();
     ctx.roundRect(W / 2 - bw / 2, y - 76, bw, 110, 55);
     ctx.fill();
     ctx.lineWidth = 5;
-    ctx.strokeStyle = C.plum;
+    ctx.strokeStyle = C.ink;
     ctx.stroke();
-    ctx.fillStyle = C.plum;
+    ctx.fillStyle = cold ? C.ink : C.chalk;
     ctx.fillText(label, W / 2, y);
 
     y += 120;
@@ -209,7 +230,7 @@ export async function makeCard(s) {
     ctx.fillText(QUIPS[s.rank], W / 2, y);
   }
 
-  ctx.fillStyle = C.plum;
+  ctx.fillStyle = C.ink;
   ctx.font = '800 38px "Nunito", sans-serif';
   ctx.fillText("blamenick.com/killer-clues", W / 2, cy + ch - 60);
 

@@ -5,7 +5,7 @@ import { shareText, copiedLine, makeCard } from "./share.js";
 const STORE_KEY = "killer-clues:v1";
 const RANKS = ["Chief Inspector", "Inspector", "Sergeant", "Constable"];
 const GONE_COLD = "Case gone cold";
-const PASTELS = ["#DDD6F7", "#F7C9D4", "#C9EBDA", "#FBEAB0", "#CDE3F7", "#F2A19A"];
+const PASTELS = ["#9E3B2F", "#E8C15A", "#B9CBA4", "#BCCBD8", "#E9B8A8", "#EFE3C6"];
 
 const $ = (id) => document.getElementById(id);
 const el = {

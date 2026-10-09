@@ -1,3 +1,33 @@
+/* Killer Clues: a cozy mystery. Warm coffee-shop colours with a little
+   menace: espresso ink, a parchment case file, oxblood for the big
+   buttons and a soft mustard for highlights. The site's
+   shared tokens are re-pointed so every component picks this up. */
+:root {
+  --latte: #ece2d4;      /* desk either side */
+  --espresso: #2b2220;   /* text and outlines */
+  --paper: #fffdf9;      /* letter boxes and tiles */
+  --parchment: #efe3c6;  /* the clue card */
+  --parchment-ink: #7a6448;
+  --oxblood: #9e3b2f;
+  --oxblood-dark: #842f25;
+  --mustard: #e8c15a;
+  --sage: #b9cba4;
+  --dusty-blue: #bccbd8;
+  --terracotta: #e9b8a8;
+
+  --plum: var(--espresso);
+  --plum-soft: #7a6a5e;
+  --cream: #faf6f0;
+  --lavender: var(--parchment);
+  --blush: var(--oxblood);
+  --coral: var(--terracotta);
+  --mint: var(--sage);
+  --sky: #f3ece2;
+  --butter: var(--mustard);
+  --line: rgba(43, 34, 32, 0.14);
+  --shadow: 0 8px 24px rgba(43, 34, 32, 0.08), 0 2px 6px rgba(43, 34, 32, 0.06);
+}
+
 .topbar {
   display: flex;
   align-items: center;
@@ -182,7 +212,7 @@
 
 .rank-counts { list-style: none; margin: 18px 0 8px; padding: 0; display: grid; gap: 6px; }
 .rank-counts li { display: grid; grid-template-columns: 9em 1fr 2em; align-items: center; gap: 10px; font-weight: 700; font-size: 15px; }
-.rank-counts .bar { height: 12px; border-radius: 999px; background: var(--lavender); min-width: 4px; }
+.rank-counts .bar { height: 12px; border-radius: 999px; background: var(--case-grey-dark); min-width: 4px; }
 .rank-counts .n { text-align: right; font-variant-numeric: tabular-nums; }
 .stats-note { margin: 12px 0 0; font-size: 13px; color: var(--plum-soft); text-align: center; }
 
@@ -268,7 +298,7 @@
   font-size: 18px;
   box-shadow: 0 4px 0 var(--plum);
 }
-.share-big:hover { background: #f4b8c6; }
+.share-big:hover { background: var(--oxblood-dark); }
 .side-share-note { margin: 8px 0 20px; text-align: center; }
 
 .next-case {
@@ -285,12 +315,12 @@
 .next-case .big { font-size: 32px; }
 
 @media (min-width: 1200px) {
-  /* Three bands: lavender either side, the cream case file in the middle. */
+  /* Three bands: a darker desk either side, the case in the middle. */
   body {
     background: linear-gradient(90deg,
-      #ebe6fa 0 calc(50% - 300px),
+      var(--latte) 0 calc(50% - 300px),
       var(--cream) calc(50% - 300px) calc(50% + 300px),
-      #ebe6fa calc(50% + 300px));
+      var(--latte) calc(50% + 300px));
   }
   .topbar.column { max-width: none; padding: 20px 32px 8px; }
 
@@ -302,8 +332,6 @@
   .desk > main.column {
     max-width: none;
     padding: 0 40px 40px;
-    border-left: 2px dashed var(--line);
-    border-right: 2px dashed var(--line);
   }
   .side {
     display: block;
@@ -320,3 +348,34 @@
   .clue { font-size: 30px; }
   .box { width: 52px; height: 60px; font-size: 28px; }
 }
+
+/* ---- Cozy mystery touches ---- */
+
+/* A drop of blood beside the name, as if it just landed */
+.title .drop {
+  width: 0.5em;
+  height: 0.66em;
+  margin-left: 0.12em;
+  vertical-align: -0.02em;
+}
+@media (prefers-reduced-motion: no-preference) {
+  .title .drop { animation: drip 0.9s cubic-bezier(0.3, 1.5, 0.5, 1) 0.2s both; }
+}
+@keyframes drip {
+  from { transform: translateY(-0.6em) scale(0.6); opacity: 0; }
+  to { transform: none; opacity: 1; }
+}
+.btn.primary, .share-icon { color: var(--paper); }
+.icon-btn { background: var(--paper); }
+.icon-btn.share-icon { background: var(--oxblood); }
+
+.clue .count, .example-label { color: var(--parchment-ink); }
+.side .example { background: var(--parchment); }
+.box { background: var(--paper); }
+.box:focus { background: var(--paper); }
+.box.revealed { background: var(--dusty-blue); }
+.come-back > div, .stat-row > div, .next-case { background: var(--paper); }
+.rank-counts .bar { background: var(--oxblood); }
+.solved.cold .rank-card { background: var(--dusty-blue); }
+.give-up { background: var(--paper); }
+.evidence-text { background: var(--paper); }
