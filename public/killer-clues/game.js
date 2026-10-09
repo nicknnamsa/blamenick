@@ -5,7 +5,7 @@ import { shareText, copiedLine, makeCard } from "./share.js";
 const STORE_KEY = "killer-clues:v1";
 const RANKS = ["Chief Inspector", "Inspector", "Sergeant", "Constable"];
 const GONE_COLD = "Case gone cold";
-const PASTELS = ["#9E3B2F", "#E8C15A", "#B9CBA4", "#BCCBD8", "#E9B8A8", "#EFE3C6"];
+const PASTELS = ["#9E3B2F", "#DDDAE2", "#C8C3D0", "#FDFCFE", "#9E3B2F", "#C8C3D0"];
 
 const $ = (id) => document.getElementById(id);
 const el = {
@@ -32,6 +32,8 @@ const el = {
   helpDialog: $("help-dialog"),
   statsDialog: $("stats-dialog"),
   confetti: $("confetti"),
+  stamp: $("stamp"),
+  folderLabel: $("folder-label"),
   sideShare: $("side-share"),
   sideShareLabel: $("side-share-label"),
   sideShareNote: $("side-share-note"),
@@ -187,6 +189,8 @@ function renderFinished({ celebrate = false } = {}) {
   el.solved.hidden = false;
   el.solved.classList.toggle("cold", !solved);
   el.verdict.textContent = solved ? "Case closed." : "The case has gone cold.";
+  el.stamp.textContent = solved ? "Case closed" : "Gone cold";
+  el.stamp.className = `stamp ${solved ? "closed" : "cold"}${celebrate ? " thud" : ""}`;
   el.explanation.textContent = record.explanation;
   el.rank.textContent = rankFor(game);
   el.tally.textContent = tallyText();
@@ -518,7 +522,8 @@ async function start() {
   const dateLabel = new Date(`${record.date}T12:00:00`).toLocaleDateString("en-GB", {
     weekday: "long", day: "numeric", month: "long",
   });
-  el.caseLine.textContent = `Case ${record.case}, ${dateLabel}`;
+  el.caseLine.textContent = dateLabel;
+  el.folderLabel.textContent = `Case ${record.case}`;
 
   game = store.games[today] ??= { case: record.case, guesses: [], hints: 0, status: "playing" };
   saveStore();

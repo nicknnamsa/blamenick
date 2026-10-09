@@ -70,13 +70,13 @@ export function copiedLine(s) {
 // ---- Picture card (1080 × 1350, the shape Instagram likes) ----
 
 const C = {
-  night: "#ECE2D4",  // latte background
-  ink: "#2B2220",    // espresso
-  soft: "#7A6448",
-  chalk: "#FFFDF9",
-  manila: "#EFE3C6", // parchment case file
+  night: "#E4E2E7",  // desk grey background
+  ink: "#26232B",    // graphite
+  soft: "#6B6575",
+  chalk: "#FDFCFE",
+  manila: "#FFFFFF", // the case file
   blood: "#9E3B2F",  // oxblood
-  tape: "#E8C15A",   // mustard, for the dots
+  tape: "#C8C3D0",   // darker grey, for the dots
   steel: "#BCCBD8",
 };
 
@@ -154,7 +154,7 @@ export async function makeCard(s) {
   // Latte background with a few dots, like the confetti on a solve.
   ctx.fillStyle = C.night;
   ctx.fillRect(0, 0, W, H);
-  const dots = [C.blood, C.tape, C.chalk, C.steel, C.manila];
+  const dots = [C.blood, C.manila, C.chalk, C.tape, C.manila];
   for (let i = 0; i < 18; i++) {
     const a = (i * 137.5 * Math.PI) / 180;
     const r = 470 + (i % 3) * 40;

@@ -1,31 +1,31 @@
-/* Killer Clues: a cozy mystery. Warm coffee-shop colours with a little
-   menace: espresso ink, a parchment case file, oxblood for the big
-   buttons and a soft mustard for highlights. The site's
-   shared tokens are re-pointed so every component picks this up. */
+/* Killer Clues: a pencil-grey case file with one drop of colour. Soft
+   greys and graphite ink, oxblood for the big buttons, and a darker grey
+   for highlights. The site's shared tokens are re-pointed so every
+   component picks this up. */
 :root {
-  --latte: #ece2d4;      /* desk either side */
-  --espresso: #2b2220;   /* text and outlines */
-  --paper: #fffdf9;      /* letter boxes and tiles */
-  --parchment: #efe3c6;  /* the clue card */
-  --parchment-ink: #7a6448;
+  --desk: #e4e2e7;       /* desk either side */
+  --ink: #26232b;        /* text and outlines */
+  --paper: #ffffff;      /* letter boxes and tiles */
+  --case: #dddae2;       /* the clue card */
+  --case-ink: #6b6575;
+  --case-deep: #c8c3d0;  /* highlighter */
   --oxblood: #9e3b2f;
   --oxblood-dark: #842f25;
-  --mustard: #e8c15a;
   --sage: #b9cba4;
   --dusty-blue: #bccbd8;
   --terracotta: #e9b8a8;
 
-  --plum: var(--espresso);
-  --plum-soft: #7a6a5e;
-  --cream: #faf6f0;
-  --lavender: var(--parchment);
+  --plum: var(--ink);
+  --plum-soft: #6b6575;
+  --cream: #ffffff;      /* the clean white middle */
+  --lavender: var(--case);
   --blush: var(--oxblood);
   --coral: var(--terracotta);
   --mint: var(--sage);
-  --sky: #f3ece2;
-  --butter: var(--mustard);
-  --line: rgba(43, 34, 32, 0.14);
-  --shadow: 0 8px 24px rgba(43, 34, 32, 0.08), 0 2px 6px rgba(43, 34, 32, 0.06);
+  --sky: #f4f3f6;
+  --butter: var(--case-deep);
+  --line: rgba(38, 35, 43, 0.14);
+  --shadow: 0 8px 24px rgba(38, 35, 43, 0.08), 0 2px 6px rgba(38, 35, 43, 0.06);
 }
 
 .topbar {
@@ -52,15 +52,65 @@
 }
 
 /* The clue card is the star of the page. */
+/* A grey case folder with a tab, holding a sheet of lined paper */
 .clue-card {
   position: relative;
-  padding: 36px 24px 32px;
+  margin-top: 34px;
+  padding: 12px;
   border: 2px solid var(--plum);
-  border-radius: 24px;
+  border-radius: 6px 22px 22px 22px;
   background: var(--lavender);
-  box-shadow: var(--shadow);
+  box-shadow: 0 6px 0 var(--plum);
 }
-.clue-icon { position: absolute; top: -18px; left: 20px; width: 40px; height: 40px; }
+.folder-tab {
+  position: absolute;
+  top: -32px;
+  left: -2px;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 32px;
+  padding: 0 16px 2px 12px;
+  border: 2px solid var(--plum);
+  border-bottom: none;
+  border-radius: 12px 12px 0 0;
+  background: var(--lavender);
+  font: 800 12px/1 var(--sans);
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+.folder-tab svg { width: 16px; height: 16px; }
+.paper {
+  position: relative;
+  padding: 34px 24px 30px 36px;
+  border-radius: 12px;
+  background-color: #fff;
+  background-image:
+    linear-gradient(90deg, transparent 20px, rgba(158, 59, 47, 0.35) 20px, rgba(158, 59, 47, 0.35) 22px, transparent 22px),
+    repeating-linear-gradient(transparent 0 33px, rgba(38, 35, 43, 0.07) 33px 35px);
+  box-shadow: inset 0 0 0 2px var(--line);
+}
+.stamp {
+  position: absolute;
+  top: 10px;
+  right: 12px;
+  padding: 3px 8px;
+  border: 2.5px solid currentColor;
+  border-radius: 6px;
+  color: var(--oxblood);
+  font: 800 11px/1.2 var(--sans);
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  opacity: 0.8;
+  transform: rotate(7deg);
+}
+.stamp.closed { color: #557344; }
+.stamp.cold { color: var(--case-ink); }
+.stamp.thud { animation: thud 0.35s cubic-bezier(0.3, 1.6, 0.5, 1); }
+@keyframes thud {
+  from { transform: rotate(7deg) scale(2.2); opacity: 0; }
+  to { transform: rotate(7deg) scale(1); opacity: 0.8; }
+}
 .clue {
   margin: 0;
   font: 500 26px/1.35 var(--serif);
@@ -93,7 +143,7 @@
   transition: background 0.2s;
 }
 .box:focus { outline: none; background: #fff; box-shadow: 0 0 0 3px var(--blush); }
-.box.locked { background: var(--butter); }
+.box.locked { background: var(--case); }
 .box.correct { background: var(--mint); }
 .box.revealed { background: var(--sky); }
 .box.pop { animation: pop 0.14s ease-out; }
@@ -126,8 +176,10 @@
 .ruled-out ul { display: flex; flex-wrap: wrap; justify-content: center; gap: 6px; margin: 0; padding: 0; list-style: none; }
 .ruled-out li {
   padding: 4px 12px;
+  border: 2px solid var(--line);
   border-radius: 999px;
-  background: var(--coral);
+  background: var(--paper);
+  color: var(--plum-soft);
   font-weight: 800;
   text-decoration: line-through;
   text-decoration-thickness: 2px;
@@ -138,8 +190,9 @@
 .hint-list { margin: 0 0 14px; padding: 0; list-style: none; display: grid; gap: 8px; }
 .hint-list li {
   padding: 10px 16px;
+  border: 2px solid var(--line);
   border-radius: 16px;
-  background: var(--butter);
+  background: var(--paper);
   font-weight: 700;
 }
 .hint-buttons { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; }
@@ -159,7 +212,7 @@
   width: 100%;
   padding: 18px;
   border-radius: 20px;
-  background: var(--mint);
+  background: var(--case);
 }
 .solved.cold .rank-card { background: var(--sky); }
 .rank-label { font-size: 13px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--plum-soft); }
@@ -226,7 +279,7 @@
   padding: 18px 20px 20px;
   border: 2px solid var(--plum);
   border-radius: 22px;
-  background: var(--butter);
+  background: var(--paper);
   box-shadow: 0 6px 0 var(--plum), var(--shadow);
 }
 .evidence.in { animation: evidence-in 0.45s cubic-bezier(0.2, 1.6, 0.4, 1); }
@@ -317,10 +370,11 @@
 @media (min-width: 1200px) {
   /* Three bands: a darker desk either side, the case in the middle. */
   body {
-    background: linear-gradient(90deg,
-      var(--latte) 0 calc(50% - 300px),
-      var(--cream) calc(50% - 300px) calc(50% + 300px),
-      var(--latte) calc(50% + 300px));
+    background-color: var(--desk);
+    background-image:
+      linear-gradient(90deg, transparent calc(50% - 300px), var(--cream) calc(50% - 300px), var(--cream) calc(50% + 300px), transparent calc(50% + 300px)),
+      radial-gradient(rgba(38, 35, 43, 0.1) 1.5px, transparent 1.5px);
+    background-size: auto, 22px 22px;
   }
   .topbar.column { max-width: none; padding: 20px 32px 8px; }
 
@@ -344,7 +398,7 @@
   .side-left .side-inner { margin-left: auto; }
 
   .title { font-size: 40px; margin-top: 16px; }
-  .clue-card { padding: 44px 32px 40px; }
+  .paper { padding: 44px 32px 40px 44px; }
   .clue { font-size: 30px; }
   .box { width: 52px; height: 60px; font-size: 28px; }
 }
@@ -369,13 +423,20 @@
 .icon-btn { background: var(--paper); }
 .icon-btn.share-icon { background: var(--oxblood); }
 
-.clue .count, .example-label { color: var(--parchment-ink); }
-.side .example { background: var(--parchment); }
+.clue .count, .example-label { color: var(--case-ink); }
+.side .example { background: var(--case); }
 .box { background: var(--paper); }
 .box:focus { background: var(--paper); }
 .box.revealed { background: var(--dusty-blue); }
 .come-back > div, .stat-row > div, .next-case { background: var(--paper); }
 .rank-counts .bar { background: var(--oxblood); }
-.solved.cold .rank-card { background: var(--dusty-blue); }
+.solved.cold .rank-card { background: var(--paper); border: 2px solid var(--line); }
 .give-up { background: var(--paper); }
-.evidence-text { background: var(--paper); }
+.evidence-text { background: var(--cream); }
+
+/* On the white middle, white tiles get a hairline so they don't vanish */
+.come-back > div, .hint-list li { border: 2px solid var(--line); box-shadow: none; }
+
+/* Solid shadows make the casebook feel like things you could pick up */
+.stat-row > div, .next-case { border: 2px solid var(--plum); box-shadow: 0 4px 0 var(--plum); }
+.side .example { border: 2px solid var(--plum); box-shadow: 0 4px 0 var(--plum); }

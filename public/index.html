@@ -11,6 +11,11 @@
   <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="/styles/base.css">
   <style>
+    /* Pastel purple frame with one pink accent. Everything else is cream,
+       white and ink, so the game cards carry the rest of the colour. */
+    :root { --band-colour: var(--lavender); --accent: #f2a19a; }
+    .btn { background: #fff; }
+
     .wrap { width: 100%; max-width: 1180px; margin: 0 auto; padding: 0 16px; }
     @media (min-width: 720px) { .wrap { padding: 0 32px; } }
 
@@ -18,9 +23,9 @@
     .top-space { height: 48px; }
 
     /* ---- Hero band: full width so the edges never feel empty ---- */
-    /* A soft pastel grey banner. Change --band to try another shade. */
+    /* Pastel purple banner. Change --band-colour to try another shade. */
     .hero-band {
-      --band: #dddae2;
+      --band: var(--band-colour);
       position: relative;
       overflow: hidden;
       border-top: 2px solid var(--plum);
@@ -46,7 +51,7 @@
       padding: 4px 14px;
       border: 2px solid var(--plum);
       border-radius: 999px;
-      background: var(--butter);
+      background: #fff;
       color: var(--plum);
       font-size: 14px;
       font-weight: 800;
@@ -64,8 +69,8 @@
     .intro { max-width: 34em; margin: 22px 0 0; font-size: 20px; line-height: 1.5; }
     .hero-actions { display: flex; flex-wrap: wrap; gap: 12px; margin-top: 26px; }
     .hero-actions .btn { background: #fff; }
-    .hero-actions .btn.kc { background: #9e3b2f; color: #fffdf9; border-color: #2b2220; box-shadow: 0 3px 0 #2b2220; }
-    .hero-actions .btn.kc:hover { background: #842f25; }
+    .hero-actions .btn.kc { background: var(--plum); color: #fffdf9; }
+    .hero-actions .btn.kc:hover { background: #453a58; }
     .facts { display: flex; flex-wrap: wrap; gap: 10px 28px; margin: 30px 0 0; padding: 0; list-style: none; font-weight: 700; color: var(--plum-soft); }
     .facts strong { display: block; font: 800 26px/1.1 var(--sans); color: var(--plum); }
 
@@ -105,9 +110,9 @@
     }
     .card:has(.art) h2 { padding-right: 64px; }
     .card .art { position: absolute; top: 20px; right: 20px; width: 56px; height: 56px; }
-    /* Killer Clues wears its own cozy-mystery colours */
-    .card.killer { --card-bg: #efe3c6; border-color: #2b2220; color: #2b2220; }
-    .card.killer .btn.primary { background: #9e3b2f; color: #fffdf9; border-color: #2b2220; box-shadow: 0 3px 0 #2b2220; }
+    /* Killer Clues wears its own pencil-grey and oxblood */
+    .card.killer { --card-bg: #dddae2; border-color: #26232b; color: #26232b; }
+    .card.killer .btn.primary { background: #9e3b2f; color: #fffdf9; border-color: #26232b; box-shadow: 0 3px 0 #26232b; }
     .card.killer .btn.primary:hover { background: #842f25; }
     .drop { width: 0.5em; height: 0.66em; margin-left: 0.1em; vertical-align: -0.02em; }
     .card.banana { --card-bg: var(--butter); }
@@ -137,7 +142,7 @@
     .about h2, .hello h2 { margin: 0 0 10px; font: 600 26px/1.2 var(--serif); }
     .about p { margin: 0 0 10px; }
     .about p:last-child { margin: 0; }
-    .hello { display: flex; flex-direction: column; gap: 10px; border: 2px solid var(--plum); background: var(--blush); }
+    .hello { display: flex; flex-direction: column; gap: 10px; border: 2px solid var(--plum); background: var(--lavender); }
     .hello p { margin: 0; }
     .hello .btn { align-self: flex-start; margin-top: auto; background: #fff; }
 
@@ -146,7 +151,7 @@
       padding: 24px 20px 20px;
       border: 2px solid var(--plum);
       border-radius: 24px;
-      background: var(--mint);
+      background: #fff;
       color: var(--plum);
       box-shadow: var(--shadow);
     }
@@ -159,7 +164,7 @@
       position: relative;
       padding: 12px 10px 6px;
       border-radius: 18px;
-      background: #fff;
+      background: #f6f4f8;
     }
     .popularity.empty .pop-card { display: none; }
     .pop-chart { width: 100%; min-height: 180px; }
@@ -168,7 +173,7 @@
     .pop-chart .axis { fill: var(--plum-soft); font: 700 11px var(--sans); }
     .pop-chart .area { fill: var(--lavender); }
     .pop-chart .line { fill: none; stroke: var(--plum); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-    .pop-chart .dot { fill: var(--blush); stroke: var(--plum); stroke-width: 2; }
+    .pop-chart .dot { fill: var(--accent); stroke: var(--plum); stroke-width: 2; }
     .pop-chart .cross { stroke: var(--plum-soft); stroke-width: 1; stroke-dasharray: 3 3; }
     .pop-tip {
       position: absolute;
@@ -253,7 +258,7 @@
           <path d="M34 34l11 11"/>
         </svg>
         <span class="tag">Daily</span>
-        <h2>Killer Clues<svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 2C12 2 3 13.5 3 20a9 9 0 0 0 18 0C21 13.5 12 2 12 2z" fill="#9e3b2f" stroke="#2b2220" stroke-width="2" stroke-linejoin="round"/><path d="M8 20a4 4 0 0 0 3 4" fill="none" stroke="#fffdf9" stroke-width="2" stroke-linecap="round" opacity="0.7"/></svg></h2>
+        <h2>Killer Clues<svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 2C12 2 3 13.5 3 20a9 9 0 0 0 18 0C21 13.5 12 2 12 2z" fill="#9e3b2f" stroke="#26232b" stroke-width="2" stroke-linejoin="round"/><path d="M8 20a4 4 0 0 0 3 4" fill="none" stroke="#fdfcfe" stroke-width="2" stroke-linecap="round" opacity="0.7"/></svg></h2>
         <p>One clue, one killer. Read the sentence and name what did it.</p>
         <a class="btn primary" href="/killer-clues/">Play today's</a>
       </article>
