@@ -1,0 +1,138 @@
+// Every Killer Clues case. This file lives outside public/, so the browser
+// never sees it: the API function hands out one day's record at a time.
+//
+// Case 1 runs on START_DATE. For the proof of concept the list loops once it
+// runs out, so there is always a case to play.
+
+export const START_DATE = "2026-10-09";
+
+export const clues = [
+  {
+    clue: "Left ragged and torn, with one clean wound.",
+    answer: "DAGGER",
+    type: "anagram",
+    highlight: ["ragged", "torn"],
+    hints: ["It's an anagram.", "Look at 'ragged'.", "It starts with D."],
+    explanation: "'Ragged' rearranged ('torn') gives DAGGER, which leaves one clean wound.",
+  },
+  {
+    clue: "One at the bar, one in the back.",
+    answer: "SHOT",
+    type: "double meaning",
+    highlight: ["at the bar", "in the back"],
+    hints: ["One word, two meanings.", "Look at 'at the bar' and 'in the back'.", "It starts with S."],
+    explanation: "A SHOT is a drink at the bar, and a shot in the back is how he went.",
+  },
+  {
+    clue: "Ask the cat what got him.",
+    answer: "CURIOSITY",
+    type: "saying",
+    highlight: ["the cat"],
+    hints: ["It's a well-known saying.", "Look at 'the cat'.", "It starts with C."],
+    explanation: "Curiosity killed the cat, so the cat would know.",
+  },
+  {
+    clue: "Something in Europe finished her.",
+    answer: "ROPE",
+    type: "hidden",
+    highlight: ["in Europe"],
+    hints: ["The answer is hidden in the clue.", "Look inside 'Europe'.", "It starts with R."],
+    explanation: "ROPE sits inside eu-ROPE: 'something in' tells you to look within.",
+  },
+  {
+    clue: "Sharp words, rearranged, ended the duel.",
+    answer: "SWORD",
+    type: "anagram",
+    highlight: ["words", "rearranged"],
+    hints: ["It's an anagram.", "Look at 'words'.", "It starts with S."],
+    explanation: "'Words' rearranged gives SWORD, a sharp way to end a duel.",
+  },
+  {
+    clue: "It came in autumn, and it came off the cliff edge.",
+    answer: "FALL",
+    type: "double meaning",
+    highlight: ["autumn", "off the cliff edge"],
+    hints: ["One word, two meanings.", "Look at 'autumn' and 'off the cliff edge'.", "It starts with F."],
+    explanation: "FALL is another name for autumn, and a fall off a cliff is fatal.",
+  },
+  {
+    clue: "He lived. Look back to see who took him.",
+    answer: "DEVIL",
+    type: "reversal",
+    highlight: ["lived", "Look back"],
+    hints: ["A word is read backwards.", "Look at 'lived'.", "It starts with D."],
+    explanation: "'Lived' read back gives DEVIL, who came to take him.",
+  },
+  {
+    clue: "The wasp lost its head, and a queen lost her life.",
+    answer: "ASP",
+    type: "deletion",
+    highlight: ["wasp", "lost its head"],
+    hints: ["A word loses a letter.", "Look at 'wasp'.", "It starts with A."],
+    explanation: "WASP without its first letter is ASP, the snake that killed Cleopatra.",
+  },
+  {
+    clue: "A scare in the kitchen, mixed into his tea.",
+    answer: "ARSENIC",
+    type: "anagram",
+    highlight: ["scare in", "mixed"],
+    hints: ["It's an anagram.", "Look at 'scare in'.", "It starts with A."],
+    explanation: "'Scare in' mixed up gives ARSENIC, the classic poison in the teacup.",
+  },
+  {
+    clue: "The burgundy hid what shot him.",
+    answer: "GUN",
+    type: "hidden",
+    highlight: ["burgundy hid"],
+    hints: ["The answer is hidden in the clue.", "Look inside 'burgundy'.", "It starts with G."],
+    explanation: "GUN hides inside bur-GUN-dy.",
+  },
+  {
+    clue: "He joined one on Monday and met another in the alley.",
+    answer: "CLUB",
+    type: "double meaning",
+    highlight: ["joined one", "in the alley"],
+    hints: ["One word, two meanings.", "Look at 'joined one' and 'in the alley'.", "It starts with C."],
+    explanation: "You join a CLUB, and a club is a blunt end in a dark alley.",
+  },
+  {
+    clue: "The old sofa began to sag. Read it back to find what filled the room.",
+    answer: "GAS",
+    type: "reversal",
+    highlight: ["sag", "Read it back"],
+    hints: ["A word is read backwards.", "Look at 'sag'.", "It starts with G."],
+    explanation: "'Sag' read back gives GAS, which quietly filled the room.",
+  },
+  {
+    clue: "The scold lost her head, and he froze out on the moor.",
+    answer: "COLD",
+    type: "deletion",
+    highlight: ["scold", "lost her head"],
+    hints: ["A word loses a letter.", "Look at 'scold'.", "It starts with C."],
+    explanation: "SCOLD without its first letter is COLD, which did for him on the moor.",
+  },
+  {
+    clue: "He was only killing it, but in the end it killed him.",
+    answer: "TIME",
+    type: "saying",
+    highlight: ["killing it"],
+    hints: ["It's a well-known saying.", "Look at 'killing it'.", "It starts with T."],
+    explanation: "He was killing TIME, and time gets everyone in the end.",
+  },
+  {
+    clue: "Every road sign warned him that it kills.",
+    answer: "SPEED",
+    type: "saying",
+    highlight: ["road sign", "it kills"],
+    hints: ["It's a well-known saying.", "Look at 'road sign' and 'it kills'.", "It starts with S."],
+    explanation: "'Speed kills', as every road sign says.",
+  },
+  {
+    clue: "She killed him with it, and he thanked her every day.",
+    answer: "KINDNESS",
+    type: "saying",
+    highlight: ["killed him with it"],
+    hints: ["It's a well-known saying.", "Look at 'killed him with it'.", "It starts with K."],
+    explanation: "She killed him with KINDNESS, so of course he said thank you.",
+  },
+];

@@ -1,0 +1,106 @@
+/* Shared look for blamenick.com and every game under it. */
+
+:root {
+  --cream: #fbf7f2;
+  --lavender: #ddd6f7;
+  --blush: #f7c9d4;
+  --mint: #c9ebda;
+  --butter: #fbeab0;
+  --sky: #cde3f7;
+  --coral: #f2a19a;
+  --plum: #2e2440;
+  --plum-soft: #6b5f80;
+  --line: rgba(46, 36, 64, 0.14);
+  --shadow: 0 8px 24px rgba(46, 36, 64, 0.08), 0 2px 6px rgba(46, 36, 64, 0.05);
+
+  --sans: "Nunito", ui-rounded, system-ui, sans-serif;
+  --serif: "Fraunces", Georgia, serif;
+  --radius: 20px;
+}
+
+* { box-sizing: border-box; }
+
+[hidden] { display: none !important; }
+
+html { -webkit-text-size-adjust: 100%; }
+
+body {
+  margin: 0;
+  background: var(--cream);
+  color: var(--plum);
+  font-family: var(--sans);
+  font-size: 17px;
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+a { color: inherit; }
+
+.column {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  padding: 0 16px;
+}
+
+main.column { flex: 1; }
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  min-height: 48px;
+  padding: 0 24px;
+  border: 2px solid var(--plum);
+  border-radius: 999px;
+  background: var(--sky);
+  color: var(--plum);
+  font: 800 16px/1 var(--sans);
+  text-decoration: none;
+  cursor: pointer;
+  box-shadow: 0 3px 0 var(--plum);
+  transition: transform 0.08s ease, box-shadow 0.08s ease, opacity 0.15s;
+}
+.btn:active:not(:disabled) { transform: translateY(3px); box-shadow: 0 0 0 var(--plum); }
+.btn:disabled { opacity: 0.4; cursor: default; }
+.btn.primary { background: var(--blush); }
+.btn.small { min-height: 38px; padding: 0 16px; font-size: 14px; box-shadow: 0 2px 0 var(--plum); }
+.btn:focus-visible, .icon-btn:focus-visible { outline: 3px solid var(--plum); outline-offset: 3px; }
+
+.icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 40px;
+  height: 40px;
+  border: 2px solid var(--plum);
+  border-radius: 999px;
+  background: #fff;
+  color: var(--plum);
+  font: 800 16px/1 var(--sans);
+  cursor: pointer;
+}
+
+.site-footer {
+  padding: 40px 16px 32px;
+  text-align: center;
+  font-size: 15px;
+  color: var(--plum-soft);
+}
+.site-footer a { font-weight: 800; color: var(--plum); }
+
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}

@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Killer Clues</title>
+  <meta name="description" content="One clue, one killer, every day. Read the sentence and name what did it.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/base.css">
+  <link rel="stylesheet" href="game.css">
+</head>
+<body>
+  <header class="topbar column">
+    <a class="home-link" href="/">← Blame Nick</a>
+    <div class="topbar-actions">
+      <button class="icon-btn share-icon" id="share-btn" type="button" aria-label="Share">
+        <svg width="18" height="18" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13V3M6 7l4-4 4 4M4 11v5h12v-5"/></svg>
+      </button>
+      <button class="icon-btn" id="help-btn" type="button" aria-label="How to play">?</button>
+      <button class="icon-btn" id="stats-btn" type="button" aria-label="Your stats">
+        <svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M3 15V9M9 15V3M15 15v-4"/></svg>
+      </button>
+    </div>
+  </header>
+
+  <div class="desk">
+  <aside class="side side-left" aria-label="Case notes">
+    <div class="side-inner">
+      <p class="side-label">Case notes</p>
+      <h2>How it works</h2>
+      <ol class="rules">
+        <li>Every clue hides one killer: a weapon, a cause of death, or something stranger.</li>
+        <li>Type into the boxes and press <strong>Enter</strong> to accuse.</li>
+        <li>Fewer hints means a higher rank.</li>
+      </ol>
+      <div class="example">
+        <p class="example-label">Worked example</p>
+        <p class="example-clue">Even omens couldn't save him. (5)</p>
+        <p>e<mark>VEN OM</mark>ens hides <strong>VENOM</strong>.</p>
+      </div>
+    </div>
+  </aside>
+
+  <main class="column">
+    <h1 class="title">Killer Clues</h1>
+    <p class="case-line" id="case-line">Opening the case file…</p>
+
+    <section class="clue-card" id="clue-card" aria-live="polite">
+      <svg class="clue-icon" viewBox="0 0 40 40" fill="none" stroke="#2E2440" stroke-width="2.2" stroke-linecap="round" aria-hidden="true">
+        <circle cx="17" cy="17" r="9.5" fill="#fff"/>
+        <path d="M13 15c1-2 3-3 5-3"/>
+        <path d="M24 24l9 9"/>
+      </svg>
+      <p class="clue" id="clue">&nbsp;</p>
+    </section>
+
+    <form class="guess" id="guess-form" autocomplete="off" hidden>
+      <div class="boxes" id="boxes" role="group" aria-label="Your answer"></div>
+      <button class="btn primary accuse" id="accuse" type="submit">Accuse</button>
+    </form>
+
+    <p class="feedback" id="feedback" role="status"></p>
+
+    <section class="ruled-out" id="ruled-out-wrap" hidden>
+      <h2>Ruled out</h2>
+      <ul id="ruled-out"></ul>
+    </section>
+
+    <section class="hints" id="hints" hidden>
+      <ol class="hint-list" id="hint-list"></ol>
+      <div class="hint-buttons" id="hint-buttons">
+        <button class="btn small" type="button" data-hint="0">Hint 1: Type</button>
+        <button class="btn small" type="button" data-hint="1">Hint 2: Key words</button>
+        <button class="btn small" type="button" data-hint="2">Hint 3: First letter</button>
+      </div>
+      <button class="btn small give-up" id="give-up" type="button" hidden>Give up</button>
+    </section>
+
+    <section class="solved" id="solved" hidden>
+      <svg class="chalk" viewBox="0 0 120 64" fill="none" stroke="#2E2440" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" stroke-dasharray="1 5" aria-hidden="true">
+        <circle cx="18" cy="32" r="8"/>
+        <path d="M26 32h40"/>
+        <path d="M34 32l10-15 12-6M34 32l12 14 10 8"/>
+        <path d="M66 32l20-12 22-4M66 32l22 12 20 8"/>
+      </svg>
+      <h2 class="verdict" id="verdict">Case closed.</h2>
+      <p class="explanation" id="explanation"></p>
+      <div class="rank-card">
+        <span class="rank-label">Your rank</span>
+        <span class="rank" id="rank"></span>
+        <span class="tally" id="tally"></span>
+      </div>
+      <button class="btn primary share" id="share" type="button">Share your result</button>
+      <p class="share-note" id="share-note" role="status"></p>
+      <div class="come-back">
+        <div><span class="big" id="streak">0</span><span>day streak</span></div>
+        <div><span class="big" id="countdown">--:--:--</span><span>until the next case</span></div>
+      </div>
+      <a class="btn" href="/">More games from Nick</a>
+    </section>
+  </main>
+
+  <aside class="side side-right" aria-label="Your casebook">
+    <div class="side-inner">
+      <button class="btn primary share-big" id="side-share" type="button">
+        <svg width="20" height="20" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 13V3M6 7l4-4 4 4M4 11v5h12v-5"/></svg>
+        <span id="side-share-label">Challenge a friend</span>
+      </button>
+      <p class="share-note side-share-note" id="side-share-note" role="status"></p>
+
+      <p class="side-label">Your casebook</p>
+      <div class="stat-row">
+        <div><span class="big" data-stat="played">0</span><span>played</span></div>
+        <div><span class="big" data-stat="current">0</span><span>streak</span></div>
+        <div><span class="big" data-stat="best">0</span><span>best</span></div>
+      </div>
+      <ul class="rank-counts" data-stat="ranks"></ul>
+      <div class="next-case">
+        <span class="side-label">Next case in</span>
+        <span class="big" id="side-countdown">--:--:--</span>
+      </div>
+      <p class="stats-note">Saved in this browser only.</p>
+    </div>
+  </aside>
+  </div>
+
+  <footer class="site-footer">
+    <a href="/">More from Nick</a> · blamenick.com
+  </footer>
+
+  <dialog class="sheet" id="help-dialog" aria-labelledby="help-title">
+    <form method="dialog"><button class="icon-btn close" aria-label="Close">✕</button></form>
+    <h2 id="help-title">How to play</h2>
+    <ol class="rules">
+      <li>Every clue hides one killer: a weapon, a cause of death, or something stranger.</li>
+      <li>Fill in the boxes and press <strong>Accuse</strong>. Guess as often as you like.</li>
+      <li>Stuck? Take a hint. The fewer you take, the higher your rank.</li>
+    </ol>
+    <div class="example">
+      <p class="example-label">Worked example</p>
+      <p class="example-clue">Even omens couldn't save him. (5)</p>
+      <p>The answer is hidden in the words: e<mark>VEN OM</mark>ens gives <strong>VENOM</strong>.</p>
+    </div>
+    <p class="ranks-line">0 hints: Chief Inspector · 1: Inspector · 2: Sergeant · 3: Constable</p>
+    <form method="dialog"><button class="btn primary wide">Open the case</button></form>
+  </dialog>
+
+  <dialog class="sheet" id="stats-dialog" aria-labelledby="stats-title">
+    <form method="dialog"><button class="icon-btn close" aria-label="Close">✕</button></form>
+    <h2 id="stats-title">Your casebook</h2>
+    <div class="stat-row">
+      <div><span class="big" data-stat="played">0</span><span>played</span></div>
+      <div><span class="big" data-stat="current">0</span><span>streak</span></div>
+      <div><span class="big" data-stat="best">0</span><span>best streak</span></div>
+    </div>
+    <ul class="rank-counts" data-stat="ranks"></ul>
+    <p class="stats-note">Saved in this browser only.</p>
+  </dialog>
+
+  <div class="evidence" id="evidence" role="status" hidden>
+    <button class="icon-btn close" id="evidence-close" type="button" aria-label="Close">✕</button>
+    <span class="evidence-tag">Evidence copied</span>
+    <p class="evidence-line" id="evidence-line"></p>
+    <pre class="evidence-text" id="evidence-text"></pre>
+    <button class="btn small" id="evidence-save" type="button">Save the picture too</button>
+  </div>
+
+  <div class="confetti" id="confetti" aria-hidden="true"></div>
+
+  <script src="game.js" type="module"></script>
+  <script src="/scripts/visit.js" type="module"></script>
+</body>
+</html>
