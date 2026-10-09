@@ -3,7 +3,7 @@
 // Records a browser the first time it shows up. Sending the same id again
 // does nothing, so each browser is only ever counted once.
 
-import { ensureTable, utcDay, json } from "../../lib/visitors.js";
+import { ensureTable, utcDay, json } from "../visitors.js";
 
 const UUID = /^[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$/i;
 

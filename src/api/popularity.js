@@ -4,7 +4,7 @@
 // visitor up to today. Days with no new visitors are filled in, so the
 // chart has one point per day.
 
-import { ensureTable, utcDay, json } from "../../lib/visitors.js";
+import { ensureTable, utcDay, json } from "../visitors.js";
 
 const DAY = 86_400_000;
 

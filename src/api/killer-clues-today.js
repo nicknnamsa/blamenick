@@ -4,7 +4,7 @@
 // player's midnight. Only dates that are "today" somewhere on Earth
 // (UTC-12 to UTC+14) are allowed, so nobody can ask for next week's case.
 
-import { clues, START_DATE } from "../../../data/killer-clues.js";
+import { clues, START_DATE } from "../../data/killer-clues.js";
 
 const DAY = 86_400_000;
 
