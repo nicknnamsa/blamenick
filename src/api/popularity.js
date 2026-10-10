@@ -1,8 +1,8 @@
 // GET /api/popularity
 //
-// How many different people have visited, day by day (UTC), from the first
-// visitor up to today. Days with no new visitors are filled in, so the
-// chart has one point per day.
+// How many different people came by on each day (UTC), from the first
+// visitor up to today, plus the all-time total. Quiet days are filled in
+// with zeros so the chart has one bar per day.
 
 import { ensureTable, utcDay, json } from "../visitors.js";
 
@@ -12,22 +12,22 @@ export async function onRequestGet({ env }) {
   if (!env.DB) return json({ error: "No database bound." }, 503);
 
   await ensureTable(env.DB);
-  const { results } = await env.DB.prepare(
-    "SELECT first_day AS day, COUNT(*) AS n FROM visitors GROUP BY first_day ORDER BY first_day"
-  ).all();
+  const [{ results: perDay }, { results: firsts }, everyone] = await Promise.all([
+    env.DB.prepare("SELECT day, COUNT(*) AS n FROM daily_visits GROUP BY day ORDER BY day").all(),
+    env.DB.prepare("SELECT first_day AS day, COUNT(*) AS n FROM visitors GROUP BY first_day").all(),
+    env.DB.prepare("SELECT COUNT(*) AS n FROM visitors").first(),
+  ]);
 
-  const newOn = new Map(results.map((r) => [r.day, r.n]));
+  const people = new Map(perDay.map((r) => [r.day, r.n]));
+  const fresh = new Map(firsts.map((r) => [r.day, r.n]));
   const days = [];
-  if (results.length) {
+  if (perDay.length) {
     const end = Date.parse(`${utcDay()}T00:00:00Z`);
-    let total = 0;
-    for (let t = Date.parse(`${results[0].day}T00:00:00Z`); t <= end; t += DAY) {
+    for (let t = Date.parse(`${perDay[0].day}T00:00:00Z`); t <= end; t += DAY) {
       const day = utcDay(t);
-      const fresh = newOn.get(day) ?? 0;
-      total += fresh;
-      days.push({ day, new: fresh, total });
+      days.push({ day, people: people.get(day) ?? 0, new: fresh.get(day) ?? 0 });
     }
   }
 
-  return json({ days }, 200, { "cache-control": "public, max-age=60" });
+  return json({ total: everyone.n, days }, 200, { "cache-control": "public, max-age=60" });
 }

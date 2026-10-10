@@ -1,7 +1,7 @@
 // POST /api/visit  { id: "<uuid>" }
 //
-// Records a browser the first time it shows up. Sending the same id again
-// does nothing, so each browser is only ever counted once.
+// Sent once a day by each browser. Records the day it came by, and the day
+// it first showed up. Repeats on the same day change nothing.
 
 import { ensureTable, utcDay, json } from "../visitors.js";
 
@@ -19,8 +19,11 @@ export async function onRequestPost({ request, env }) {
   }
 
   await ensureTable(env.DB);
-  await env.DB.prepare("INSERT OR IGNORE INTO visitors (id, first_day) VALUES (?, ?)")
-    .bind(id.toLowerCase(), utcDay())
-    .run();
+  const visitor = id.toLowerCase();
+  const day = utcDay();
+  await env.DB.batch([
+    env.DB.prepare("INSERT OR IGNORE INTO visitors (id, first_day) VALUES (?, ?)").bind(visitor, day),
+    env.DB.prepare("INSERT OR IGNORE INTO daily_visits (id, day) VALUES (?, ?)").bind(visitor, day),
+  ]);
   return json({ ok: true });
 }

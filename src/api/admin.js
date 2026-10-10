@@ -64,12 +64,17 @@ export const casesRoute = {
 
 async function visitorStats(db) {
   await ensureTable(db);
-  const { results } = await db.prepare("SELECT first_day AS day, COUNT(*) AS n FROM visitors GROUP BY first_day").all();
-  const newOn = new Map(results.map((r) => [r.day, r.n]));
-  const total = results.reduce((sum, r) => sum + r.n, 0);
-  const days = lastDays(30).map((day) => ({ day, n: newOn.get(day) ?? 0 }));
-  const sum = (n) => days.slice(-n).reduce((s, d) => s + d.n, 0);
-  return { total, today: sum(1), week: sum(7), month: sum(30), days };
+  const days = lastDays(30);
+  const since = (n) => days[days.length - n];
+  const [{ results }, everyone, week, month] = await Promise.all([
+    db.prepare("SELECT day, COUNT(*) AS n FROM daily_visits WHERE day >= ? GROUP BY day").bind(days[0]).all(),
+    db.prepare("SELECT COUNT(*) AS n FROM visitors").first(),
+    db.prepare("SELECT COUNT(DISTINCT id) AS n FROM daily_visits WHERE day >= ?").bind(since(7)).first(),
+    db.prepare("SELECT COUNT(DISTINCT id) AS n FROM daily_visits WHERE day >= ?").bind(since(30)).first(),
+  ]);
+  const perDay = new Map(results.map((r) => [r.day, r.n]));
+  const series = days.map((day) => ({ day, n: perDay.get(day) ?? 0 }));
+  return { total: everyone.n, today: series.at(-1).n, week: week.n, month: month.n, days: series };
 }
 
 // ---- Killer Clues plays ----

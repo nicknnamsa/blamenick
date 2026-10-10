@@ -171,10 +171,9 @@
     .pop-chart svg { display: block; overflow: visible; }
     .pop-chart .grid { stroke: var(--line); stroke-width: 1; }
     .pop-chart .axis { fill: var(--plum-soft); font: 700 11px var(--sans); }
-    .pop-chart .area { fill: var(--lavender); }
-    .pop-chart .line { fill: none; stroke: var(--plum); stroke-width: 2; stroke-linejoin: round; stroke-linecap: round; }
-    .pop-chart .dot { fill: var(--accent); stroke: var(--plum); stroke-width: 2; }
-    .pop-chart .cross { stroke: var(--plum-soft); stroke-width: 1; stroke-dasharray: 3 3; }
+    .pop-chart .bar { fill: var(--lavender); stroke: var(--plum); stroke-width: 1.5; }
+    .pop-chart .bar.today { fill: var(--accent); }
+    .pop-chart .day:hover .bar { filter: brightness(0.94); }
     .pop-tip {
       position: absolute;
       transform: translate(-50%, calc(-100% - 2px));
@@ -223,7 +222,7 @@
 
             <section class="popularity" id="popularity" aria-labelledby="pop-title">
         <h2 id="pop-title">Nick popularity</h2>
-        <p class="pop-sub">Different people who've turned up so far</p>
+        <p class="pop-sub">Different people who came by each day</p>
         <div class="pop-hero">
           <span class="pop-total">…</span>
           <span class="pop-today"></span>
@@ -235,11 +234,11 @@
         <details class="pop-table">
           <summary>See the numbers</summary>
           <table>
-            <thead><tr><th>Day</th><th>New</th><th>Total</th></tr></thead>
+            <thead><tr><th>Day</th><th>People</th><th>New</th></tr></thead>
             <tbody></tbody>
           </table>
         </details>
-        <p class="pop-note">Each browser counts once. No names, no cookies.</p>
+        <p class="pop-note">Each browser counts once a day. No names, no cookies.</p>
       </section>
     </div>
   </section>

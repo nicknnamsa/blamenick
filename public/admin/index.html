@@ -197,18 +197,18 @@
         <div class="panel-head">
           <div>
             <h2>The site</h2>
-            <p class="sub">Different browsers, counted the first day they turn up (UTC)</p>
+            <p class="sub">Different browsers that came by (UTC days)</p>
           </div>
         </div>
         <div class="tiles">
           <div class="tile"><span class="n" id="v-total">0</span><span class="l">visitors, all time</span></div>
-          <div class="tile"><span class="n" id="v-today">0</span><span class="l">new today</span></div>
-          <div class="tile"><span class="n" id="v-week">0</span><span class="l">new this week</span></div>
-          <div class="tile"><span class="n" id="v-month">0</span><span class="l">new in 30 days</span></div>
+          <div class="tile"><span class="n" id="v-today">0</span><span class="l">people today</span></div>
+          <div class="tile"><span class="n" id="v-week">0</span><span class="l">people this week</span></div>
+          <div class="tile"><span class="n" id="v-month">0</span><span class="l">people in 30 days</span></div>
         </div>
         <div class="charts" style="grid-template-columns: 1fr;">
           <div>
-            <p class="chart-title">New visitors per day</p>
+            <p class="chart-title">People per day</p>
             <div class="bars" id="visitor-bars"></div>
           </div>
         </div>
@@ -381,7 +381,7 @@
       $("v-today").textContent = num(v.today);
       $("v-week").textContent = num(v.week);
       $("v-month").textContent = num(v.month);
-      drawBars($("visitor-bars"), v.days, "new");
+      drawBars($("visitor-bars"), v.days, "people");
     }
 
     // ---------- Killer Clues stats ----------
