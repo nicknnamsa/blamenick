@@ -1,8 +1,8 @@
-// Every Killer Clues case. This file lives outside public/, so the browser
-// never sees it: the API function hands out one day's record at a time.
+// The first Killer Clues cases. This file only seeds the database the first
+// time it's used; after that, cases are added and edited at /admin and live
+// in D1 (so new answers never land in the repo).
 //
-// Case 1 runs on START_DATE. For the proof of concept the list loops once it
-// runs out, so there is always a case to play.
+// Case 1 runs on START_DATE.
 
 export const START_DATE = "2026-10-09";
 

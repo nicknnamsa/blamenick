@@ -4,11 +4,18 @@
 import * as today from "./api/killer-clues-today.js";
 import * as visit from "./api/visit.js";
 import * as popularity from "./api/popularity.js";
+import * as play from "./api/killer-clues-play.js";
+import { loginRoute, logoutRoute, statsRoute, casesRoute } from "./api/admin.js";
 
 const routes = {
   "/api/killer-clues/today": today,
+  "/api/killer-clues/play": play,
   "/api/visit": visit,
   "/api/popularity": popularity,
+  "/api/admin/login": loginRoute,
+  "/api/admin/logout": logoutRoute,
+  "/api/admin/stats": statsRoute,
+  "/api/admin/cases": casesRoute,
 };
 
 export default {

@@ -1,6 +1,7 @@
 // Killer Clues: one clue a day, name the killer.
 
 import { shareText, copiedLine, makeCard } from "./share.js";
+import { counted } from "/scripts/visit.js";
 
 const STORE_KEY = "killer-clues:v1";
 const RANKS = ["Chief Inspector", "Inspector", "Sergeant", "Constable"];
@@ -57,6 +58,47 @@ function loadStore() {
 const store = loadStore();
 function saveStore() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch {}
+}
+
+// ---- Anonymous play reports (for the admin page) ----
+// Uses the same random browser id as the visitor counter. Nothing personal.
+
+function visitorId() {
+  try { return localStorage.getItem("blamenick:visitor"); } catch { return null; }
+}
+
+function report({ leaving = false } = {}) {
+  const visitor = visitorId();
+  if (!visitor || !record || !game) return;
+  const body = JSON.stringify({
+    visitor,
+    case: record.case,
+    date: today,
+    status: game.status,
+    hints: game.hints,
+    guesses: game.guesses.length,
+    seconds: Math.round(game.seconds ?? 0),
+  });
+  if (leaving && navigator.sendBeacon) {
+    navigator.sendBeacon("/api/killer-clues/play", new Blob([body], { type: "application/json" }));
+  } else {
+    fetch("/api/killer-clues/play", { method: "POST", headers: { "content-type": "application/json" }, body, keepalive: true }).catch(() => {});
+  }
+}
+
+// Time spent: only ticks while the case is open and the tab is in view.
+function startClock() {
+  let ticks = 0;
+  setInterval(() => {
+    if (!game || game.status !== "playing" || document.visibilityState !== "visible") return;
+    game.seconds = (game.seconds ?? 0) + 1;
+    if (++ticks % 10 === 0) saveStore();
+  }, 1000);
+  document.addEventListener("visibilitychange", () => {
+    if (document.visibilityState !== "hidden" || !game) return;
+    saveStore();
+    if (game.status === "playing") report({ leaving: true });
+  });
 }
 
 // ---- Dates ----
@@ -278,6 +320,7 @@ function accuse(e) {
     game.guesses.push(normalise(guess));
     game.status = "solved";
     saveStore();
+    report();
     renderFinished({ celebrate: true });
     return;
   }
@@ -317,6 +360,7 @@ function giveUp() {
   if (game.status !== "playing") return;
   game.status = "gaveup";
   saveStore();
+  report();
   renderFinished();
 }
 
@@ -525,8 +569,10 @@ async function start() {
   el.caseLine.textContent = dateLabel;
   el.folderLabel.textContent = `Case ${record.case}`;
 
-  game = store.games[today] ??= { case: record.case, guesses: [], hints: 0, status: "playing" };
+  game = store.games[today] ??= { case: record.case, guesses: [], hints: 0, status: "playing", seconds: 0 };
   saveStore();
+  startClock();
+  counted.then(() => report());
 
   buildBoxes();
   if (game.status === "playing") {

@@ -4,11 +4,11 @@
 // player's midnight. Only dates that are "today" somewhere on Earth
 // (UTC-12 to UTC+14) are allowed, so nobody can ask for next week's case.
 
-import { clues, START_DATE } from "../../data/killer-clues.js";
+import { ensureTables, caseForDay, dayIndex } from "../killer-clues.js";
 
 const DAY = 86_400_000;
 
-export function onRequestGet({ request }) {
+export async function onRequestGet({ request, env }) {
   const date = new URL(request.url).searchParams.get("date") ?? "";
   if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) {
     return json({ error: "Send ?date=YYYY-MM-DD" }, 400);
@@ -22,13 +22,16 @@ export function onRequestGet({ request }) {
     return json({ error: "That case isn't open yet." }, 403);
   }
 
-  const dayIndex = Math.round((asked - Date.parse(`${START_DATE}T00:00:00Z`)) / DAY);
-  if (dayIndex < 0) {
+  const index = dayIndex(date);
+  if (index < 0) {
     return json({ error: "The first case opens soon." }, 404);
   }
 
-  const record = clues[dayIndex % clues.length];
-  return json({ case: dayIndex + 1, date, length: record.answer.length, ...record });
+  await ensureTables(env.DB);
+  const record = await caseForDay(env.DB, index);
+  if (!record) return json({ error: "No cases written yet." }, 404);
+  const { day, replay, ...rest } = record;
+  return json({ case: index + 1, date, length: record.answer.length, ...rest });
 }
 
 function startOfUtcDay(ms) {
