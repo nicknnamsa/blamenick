@@ -1,0 +1,365 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Community cases · Killer Clues</title>
+  <meta name="description" content="Killer Clues written by other players. Play them, or write your own.">
+  <meta name="theme-color" content="#ffffff">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,500;0,9..144,600;1,9..144,500&family=Nunito:wght@500;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/styles/base.css">
+  <link rel="stylesheet" href="../game.css">
+  <style>
+    /* This page is one wide column, so no desk bands either side. */
+    body {
+      background-color: var(--cream);
+      background-image: radial-gradient(rgba(38, 35, 43, 0.07) 1.5px, transparent 1.5px);
+      background-size: 22px 22px;
+    }
+    .page { width: 100%; max-width: 1080px; margin: 0 auto; padding: 0 16px 40px; }
+    @media (min-width: 720px) { .page { padding: 0 32px 48px; } }
+    .page .topbar { max-width: none; padding-left: 0; padding-right: 0; }
+
+    .intro { max-width: 36em; margin: 0 auto 24px; text-align: center; color: var(--plum-soft); font-weight: 700; }
+    .controls { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 28px; }
+    .sort { display: inline-flex; padding: 3px; border: 2px solid var(--plum); border-radius: 999px; background: var(--paper); }
+    .sort button {
+      padding: 6px 14px;
+      border: 0;
+      border-radius: 999px;
+      background: transparent;
+      color: var(--plum);
+      font: 800 14px/1 var(--sans);
+      cursor: pointer;
+    }
+    .sort button[aria-pressed="true"] { background: var(--plum); color: var(--paper); }
+
+    .files { list-style: none; margin: 0; padding: 0; display: grid; gap: 34px 20px; }
+    @media (min-width: 640px) { .files { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+    @media (min-width: 980px) { .files { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+    .file {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      height: 100%;
+      padding: 18px 18px 16px;
+      border: 2px solid var(--plum);
+      border-radius: 4px 18px 18px 18px;
+      background: var(--lavender);
+      box-shadow: 0 5px 0 var(--plum);
+      text-decoration: none;
+      transition: transform 0.12s ease;
+    }
+    .file:hover { transform: translateY(-3px) rotate(-0.4deg); }
+    .file .tab {
+      position: absolute;
+      top: -28px;
+      left: -2px;
+      max-width: 85%;
+      overflow: hidden;
+      padding: 5px 12px 3px;
+      border: 2px solid var(--plum);
+      border-bottom: none;
+      border-radius: 10px 10px 0 0;
+      background: var(--lavender);
+      font: 800 12px/1.4 var(--sans);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+    }
+    .file .sheet-bit {
+      flex: 1;
+      padding: 16px 16px 14px;
+      border-radius: 10px;
+      background: var(--paper);
+      box-shadow: inset 0 0 0 2px var(--line);
+      font: 500 20px/1.35 var(--serif);
+    }
+    .file .foot { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 13px; font-weight: 800; color: var(--plum-soft); }
+    .file .mine { padding: 2px 8px; border: 2px solid currentColor; border-radius: 6px; transform: rotate(4deg); }
+    .file .mine.solved { color: #557344; }
+    .file .mine.gaveup { color: var(--case-ink); }
+    .file .play { color: var(--oxblood); }
+    .nothing { grid-column: 1 / -1; padding: 28px; border: 2px dashed var(--plum-soft); border-radius: 20px; text-align: center; color: var(--plum-soft); font-weight: 700; }
+
+    /* Writing a case */
+    .writer {
+      width: min(560px, calc(100% - 24px));
+      max-height: calc(100% - 24px);
+      padding: 26px 24px 22px;
+      border: 2px solid var(--plum);
+      border-radius: 24px;
+      background: var(--cream);
+      color: var(--plum);
+    }
+    .writer::backdrop { background: rgba(38, 35, 43, 0.45); }
+    .writer h2 { margin: 0 0 4px; font: 600 26px/1.2 var(--serif); }
+    .writer .lede { margin: 0 0 16px; color: var(--plum-soft); font-weight: 700; font-size: 15px; }
+    .writer form { display: grid; gap: 12px; }
+    .writer label { display: grid; gap: 4px; font-size: 12px; font-weight: 800; letter-spacing: 0.06em; text-transform: uppercase; color: var(--plum-soft); }
+    .writer label small { font-weight: 700; letter-spacing: 0; text-transform: none; }
+    .writer input, .writer select, .writer textarea {
+      width: 100%;
+      min-height: 44px;
+      padding: 8px 12px;
+      border: 2px solid var(--plum);
+      border-radius: 12px;
+      background: var(--paper);
+      color: var(--plum);
+      font: 700 16px/1.4 var(--sans);
+    }
+    .writer textarea { min-height: 64px; resize: vertical; }
+    .writer input:focus, .writer select:focus, .writer textarea:focus { outline: none; box-shadow: 0 0 0 3px var(--case-deep); }
+    .writer .two { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .writer .preview-wrap { margin-top: 4px; }
+    .writer .clue-card { margin-top: 30px; box-shadow: 0 4px 0 var(--plum); }
+    .writer .paper { padding: 22px 16px 18px 30px; }
+    .writer .clue { font-size: 20px; }
+    .writer .error { min-height: 1.3em; margin: 0; color: var(--oxblood); font-weight: 800; }
+    .writer .buttons { display: flex; justify-content: flex-end; gap: 10px; }
+    .writer .done { text-align: center; }
+    .writer .done .stamp { position: static; display: inline-block; margin: 8px 0 14px; font-size: 14px; }
+    .type-help { margin: -4px 0 0; font-size: 13px; color: var(--plum-soft); }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <header class="topbar">
+      <a class="home-link" href="/killer-clues/">← Today's case</a>
+      <a class="home-link" href="/">Blame Nick</a>
+    </header>
+
+    <h1 class="title">Community cases</h1>
+    <p class="intro">Killer Clues written by other players. Every one is checked by Nick before it goes up.</p>
+
+    <div class="controls">
+      <div class="sort" role="group" aria-label="Sort cases">
+        <button type="button" data-sort="new" aria-pressed="true">Newest</button>
+        <button type="button" data-sort="popular" aria-pressed="false">Most played</button>
+      </div>
+      <button class="btn primary" id="write" type="button">Write a case</button>
+    </div>
+
+    <ul class="files" id="files">
+      <li class="nothing">Opening the files…</li>
+    </ul>
+  </div>
+
+  <dialog class="writer" id="writer" aria-labelledby="writer-title">
+    <div id="writer-form-wrap">
+      <h2 id="writer-title">Write a case</h2>
+      <p class="lede">One sentence, one killer. Hide the answer in the clue and see who cracks it.</p>
+      <form id="writer-form">
+        <label>The clue <small id="clue-count">0 / 160</small>
+          <textarea name="clue" maxlength="160" required placeholder="Even omens couldn't save him."></textarea>
+        </label>
+        <div class="two">
+          <label>The killer
+            <input name="answer" required autocomplete="off" spellcheck="false" placeholder="VENOM" maxlength="15">
+          </label>
+          <label>How it works
+            <select name="type">
+              <option value="hidden">Hidden in the words</option>
+              <option value="anagram">Anagram</option>
+              <option value="double meaning">Double meaning</option>
+              <option value="reversal">Reversed</option>
+              <option value="deletion">Letter taken off</option>
+              <option value="saying">Well-known saying</option>
+              <option value="other">Something else</option>
+            </select>
+          </label>
+        </div>
+        <label>Key words <small>(optional, comma separated: they light up as a hint)</small>
+          <input name="highlight" autocomplete="off" placeholder="even omens">
+        </label>
+        <label>The explanation <small>(optional, shown at the end)</small>
+          <input name="explanation" maxlength="240" autocomplete="off" placeholder="eVEN OMens hides VENOM.">
+        </label>
+        <label>Your detective name <small>(optional)</small>
+          <input name="author" maxlength="24" autocomplete="nickname" placeholder="Anonymous detective">
+        </label>
+
+        <div class="preview-wrap">
+          <section class="clue-card" aria-label="Preview">
+            <span class="folder-tab"><span id="preview-tab">By Anonymous detective</span></span>
+            <div class="paper"><p class="clue" id="preview"></p></div>
+          </section>
+        </div>
+
+        <p class="error" id="writer-error" role="alert"></p>
+        <div class="buttons">
+          <button class="btn small" type="button" data-close>Cancel</button>
+          <button class="btn small primary" type="submit" id="writer-submit">File the case</button>
+        </div>
+      </form>
+    </div>
+
+    <div class="done" id="writer-done" hidden>
+      <span class="stamp">Case filed</span>
+      <h2>Thanks, detective.</h2>
+      <p class="lede">Nick reads every case before it goes up, usually within a day. Check back here to see yours.</p>
+      <div class="buttons" style="justify-content:center">
+        <button class="btn small" type="button" id="write-another">Write another</button>
+        <button class="btn small primary" type="button" data-close>Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script type="module">
+    import { counted } from "/scripts/visit.js";
+
+    const $ = (id) => document.getElementById(id);
+    const STORE_KEY = "killer-clues:v1";
+    const played = (() => {
+      try { return JSON.parse(localStorage.getItem(STORE_KEY))?.community ?? {}; } catch { return {}; }
+    })();
+
+    // ---- The list ----
+
+    let sort = "new";
+    async function loadFiles() {
+      const list = $("files");
+      try {
+        const res = await fetch(`/api/killer-clues/community?sort=${sort}`);
+        const { cases } = await res.json();
+        list.innerHTML = "";
+        if (!cases.length) {
+          list.innerHTML = `<li class="nothing">No community cases yet. Write the first one!</li>`;
+          return;
+        }
+        for (const c of cases) list.append(fileCard(c));
+      } catch {
+        list.innerHTML = `<li class="nothing">Couldn't open the files. Try again in a moment.</li>`;
+      }
+    }
+
+    function fileCard(c) {
+      const li = document.createElement("li");
+      const a = document.createElement("a");
+      a.className = "file";
+      a.href = `/killer-clues/?c=${c.id}`;
+
+      const tab = document.createElement("span");
+      tab.className = "tab";
+      tab.textContent = `By ${c.author}`;
+      const sheet = document.createElement("span");
+      sheet.className = "sheet-bit";
+      sheet.textContent = `${c.clue} (${c.length})`;
+
+      const foot = document.createElement("span");
+      foot.className = "foot";
+      const stats = document.createElement("span");
+      stats.textContent = c.plays
+        ? `${c.plays} played · ${Math.round((c.solved / c.plays) * 100)}% solved`
+        : "Nobody's tried it yet";
+      const mine = played[c.id]?.status;
+      const right = document.createElement("span");
+      if (mine === "solved" || mine === "gaveup") {
+        right.className = `mine ${mine}`;
+        right.textContent = mine === "solved" ? "Solved" : "Gone cold";
+      } else {
+        right.className = "play";
+        right.textContent = "Play →";
+      }
+      foot.append(stats, right);
+
+      a.append(tab, sheet, foot);
+      li.append(a);
+      return li;
+    }
+
+    document.querySelectorAll("[data-sort]").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        sort = btn.dataset.sort;
+        document.querySelectorAll("[data-sort]").forEach((b) => b.setAttribute("aria-pressed", String(b === btn)));
+        loadFiles();
+      });
+    });
+
+    // ---- Writing a case ----
+
+    const dialog = $("writer");
+    const form = $("writer-form");
+
+    const words = () => form.highlight.value.split(",").map((w) => w.trim()).filter(Boolean);
+    const escape = (s) => s.replace(/[&<>"']/g, (ch) => `&#${ch.charCodeAt(0)};`);
+
+    function preview() {
+      const answer = form.answer.value.toUpperCase().replace(/[^A-Z]/g, "");
+      let html = escape(form.clue.value) || "<em>Your clue appears here.</em>";
+      for (const w of words()) {
+        const pattern = escape(w).replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+        html = html.replace(new RegExp(pattern, "i"), (m) => `<mark>${m}</mark>`);
+      }
+      $("preview").innerHTML = `${html} <span class="count">(${answer.length || "?"})</span>`;
+      $("preview-tab").textContent = `By ${form.author.value.trim() || "Anonymous detective"}`;
+      $("clue-count").textContent = `${form.clue.value.length} / 160`;
+    }
+
+    function openWriter() {
+      $("writer-form-wrap").hidden = false;
+      $("writer-done").hidden = true;
+      $("writer-error").textContent = "";
+      preview();
+      dialog.showModal();
+      form.clue.focus();
+    }
+
+    form.addEventListener("input", preview);
+    form.answer.addEventListener("input", () => {
+      form.answer.value = form.answer.value.toUpperCase().replace(/[^A-Z]/g, "");
+    });
+
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      $("writer-error").textContent = "";
+      await counted;
+      let visitor = null;
+      try { visitor = localStorage.getItem("blamenick:visitor"); } catch {}
+      if (!visitor) {
+        $("writer-error").textContent = "Your browser is blocking storage, so we can't take submissions from it.";
+        return;
+      }
+      $("writer-submit").disabled = true;
+      try {
+        const res = await fetch("/api/killer-clues/community/submit", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({
+            visitor,
+            author: form.author.value,
+            clue: form.clue.value,
+            answer: form.answer.value,
+            type: form.type.value,
+            highlight: words(),
+            explanation: form.explanation.value,
+          }),
+        });
+        const body = await res.json();
+        if (!res.ok) throw new Error(body.error || "Something went wrong.");
+        const name = form.author.value;
+        form.reset();
+        form.author.value = name;
+        $("writer-form-wrap").hidden = true;
+        $("writer-done").hidden = false;
+      } catch (err) {
+        $("writer-error").textContent = err.message;
+      } finally {
+        $("writer-submit").disabled = false;
+      }
+    });
+
+    $("write").addEventListener("click", openWriter);
+    $("write-another").addEventListener("click", openWriter);
+    dialog.querySelectorAll("[data-close]").forEach((b) => b.addEventListener("click", () => dialog.close()));
+
+    loadFiles();
+    if (location.hash === "#write") openWriter();
+  </script>
+</body>
+</html>

@@ -1,10 +1,14 @@
 // Share text and the picture card for Killer Clues.
 //
 // `s` is a small summary of today's game:
-//   { caseNo, clue, length, status, marks: [true|false...], hints, rank }
+//   { caseNo, clue, length, status, marks: [true|false...], hints, rank, author? }
+// `author` is set for community cases, which get their own title and link.
 // where `marks` is one entry per guess (true for the right one).
 
 const URL_TEXT = "https://blamenick.com/killer-clues";
+
+const title = (s) => (s.author ? `Community case by ${s.author}` : `Case ${s.caseNo}`);
+const link = (s) => (s.author ? `${URL_TEXT}/?c=${s.caseNo}` : URL_TEXT);
 const BODY = "(x_x)-|-<";
 
 const QUIPS = {
@@ -38,22 +42,22 @@ export function shareText(s) {
 
   if (s.status === "playing") {
     return [
-      `🔪 Killer Clues · Case ${s.caseNo}`,
+      `🔪 Killer Clues · ${title(s)}`,
       `${BODY}  Somebody's dead.`,
       `"${s.clue}" (${s.length})`,
       "Name the killer. I dare you.",
-      URL_TEXT,
+      link(s),
     ].join("\n");
   }
 
   return [
-    `🔪 Killer Clues · Case ${s.caseNo}`,
+    `🔪 Killer Clues · ${title(s)}`,
     `${BODY}  ${s.status === "solved" ? "Case closed." : "Still dead. Nobody knows why."}`,
     `${BADGES[s.rank]} ${s.rank}`,
     `Guesses ${guessRow(s)}`,
     `Hints   ${hintRow(s)}`,
     `"${QUIPS[s.rank]}"`,
-    URL_TEXT,
+    link(s),
   ].join("\n");
 }
 
@@ -184,7 +188,7 @@ export async function makeCard(s) {
   ctx.textAlign = "center";
   ctx.fillStyle = C.soft;
   ctx.font = '800 34px "Nunito", sans-serif';
-  ctx.fillText(`CASE ${s.caseNo}`, W / 2, cy + 100);
+  ctx.fillText(s.author ? `COMMUNITY CASE BY ${s.author.toUpperCase()}` : `CASE ${s.caseNo}`, W / 2, cy + 100);
   ctx.fillStyle = C.ink;
   ctx.font = '600 92px "Fraunces", serif';
   ctx.fillText("Killer Clues", W / 2, cy + 200);
@@ -235,5 +239,5 @@ export async function makeCard(s) {
   ctx.fillText("blamenick.com/killer-clues", W / 2, cy + ch - 60);
 
   const blob = await new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
-  return blob && new File([blob], `killer-clues-case-${s.caseNo}.png`, { type: "image/png" });
+  return blob && new File([blob], `killer-clues-${s.author ? "community-" : "case-"}${s.caseNo}.png`, { type: "image/png" });
 }

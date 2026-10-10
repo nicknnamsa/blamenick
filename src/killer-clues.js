@@ -14,6 +14,25 @@ const HOUR = 3_600_000;
 
 export const TYPES = ["anagram", "double meaning", "hidden", "reversal", "deletion", "saying", "other"];
 
+const TYPE_HINTS = {
+  anagram: "It's an anagram.",
+  "double meaning": "One word, two meanings.",
+  hidden: "It's hidden in the clue.",
+  reversal: "Read it backwards.",
+  deletion: "Something's been taken off.",
+  saying: "It's a well-known saying.",
+  other: "Think sideways.",
+};
+
+// The three standard hints, for cases written by players.
+export function standardHints(type, highlight, answer) {
+  return [
+    TYPE_HINTS[type] ?? TYPE_HINTS.other,
+    highlight.length ? `Look at ${highlight.map((w) => `'${w}'`).join(" and ")}.` : "Read it again, slowly.",
+    `It starts with ${answer[0]}.`,
+  ];
+}
+
 export function dayIndex(isoDate) {
   return Math.round((Date.parse(`${isoDate}T00:00:00Z`) - Date.parse(`${START_DATE}T00:00:00Z`)) / DAY);
 }
@@ -60,6 +79,27 @@ async function createTables(db) {
       started_at INTEGER NOT NULL,
       updated_at INTEGER NOT NULL,
       PRIMARY KEY (visitor, case_no)
+    )`),
+    // Cases written by players. Nothing shows publicly until it's approved.
+    db.prepare(`CREATE TABLE IF NOT EXISTS community_cases (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      visitor TEXT NOT NULL,
+      author TEXT NOT NULL,
+      clue TEXT NOT NULL,
+      answer TEXT NOT NULL,
+      type TEXT NOT NULL,
+      highlight TEXT NOT NULL,
+      hints TEXT NOT NULL,
+      explanation TEXT NOT NULL,
+      status TEXT NOT NULL DEFAULT 'pending',
+      created_at INTEGER NOT NULL,
+      approved_at INTEGER
+    )`),
+    db.prepare(`CREATE TABLE IF NOT EXISTS community_plays (
+      visitor TEXT NOT NULL,
+      case_id INTEGER NOT NULL,
+      status TEXT NOT NULL,
+      PRIMARY KEY (visitor, case_id)
     )`),
   ]);
 

@@ -137,6 +137,13 @@
     .empty { margin: 8px 0; color: var(--plum-soft); font-weight: 700; }
     .warn { margin: 0 0 10px; padding: 8px 12px; border-radius: 12px; background: #f7c9d4; font-weight: 700; font-size: 14px; }
 
+    .community-box { margin-top: 20px; }
+    .community-cases { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); max-height: 720px; }
+    .case.pending { border-color: #e9b8a8; background: #fff8f6; }
+    .case.hidden-case { opacity: 0.6; }
+    .mini.ok { border-color: #557344; color: #557344; }
+    .count-badge { margin-left: 8px; padding: 1px 9px; border-radius: 999px; background: var(--oxblood); color: #fff; font: 800 13px/1.5 var(--sans); vertical-align: 3px; }
+
     .soon {
       display: flex; align-items: center; justify-content: center;
       min-height: 120px;
@@ -269,6 +276,17 @@
             <ul class="cases" id="past"></ul>
           </div>
         </div>
+
+        <div class="list-box community-box">
+          <div class="list-head">
+            <div>
+              <h3>Community cases</h3>
+              <p class="sub" id="community-sub">Written by players. Nothing goes public until you approve it.</p>
+            </div>
+            <a class="btn small" href="/killer-clues/community/" target="_blank" rel="noopener">Open page</a>
+          </div>
+          <ul class="cases community-cases" id="community"></ul>
+        </div>
       </section>
 
       <div class="soon">The next game gets its own box here.</div>
@@ -349,11 +367,16 @@
 
     async function load() {
       try {
-        const [stats, cases] = await Promise.all([api("/api/admin/stats"), api("/api/admin/cases")]);
+        const [stats, cases, community] = await Promise.all([
+          api("/api/admin/stats"),
+          api("/api/admin/cases"),
+          api("/api/admin/community"),
+        ]);
         showDash();
         renderSite(stats.visitors);
         renderPlays(stats.killerClues);
         renderCases(cases);
+        renderCommunity(community.cases);
       } catch (err) {
         if (err.message !== "signed out") {
           showLogin();
@@ -587,6 +610,88 @@
         if (err.message === "signed out") return null;
         if (!body.case) alert(err.message);
         return err.message;
+      }
+    }
+
+    // ---------- Community moderation ----------
+
+    function renderCommunity(cases) {
+      const pending = cases.filter((c) => c.status === "pending").length;
+      const live = cases.filter((c) => c.status === "approved").length;
+      const head = document.querySelector(".community-box h3");
+      head.innerHTML = "Community cases";
+      if (pending) {
+        const badge = document.createElement("span");
+        badge.className = "count-badge";
+        badge.textContent = `${pending} waiting`;
+        head.append(badge);
+      }
+      $("community-sub").textContent = `${live} live · ${pending} waiting for you · nothing goes public until you approve it`;
+
+      const list = $("community");
+      list.innerHTML = "";
+      if (!cases.length) list.innerHTML = `<p class="empty">No player cases yet.</p>`;
+      for (const c of cases) {
+        const li = document.createElement("li");
+        li.className = `case ${c.status === "pending" ? "pending" : c.status === "hidden" ? "hidden-case" : ""}`;
+
+        const when = document.createElement("div");
+        when.className = "when";
+        when.textContent = `By ${c.author} · ${fmtDay(new Date(c.createdAt).toISOString().slice(0, 10))}`;
+        const flag = document.createElement("span");
+        flag.className = `flag ${c.status === "approved" ? "soft" : ""}`;
+        flag.textContent = { pending: "Waiting", approved: "Live", hidden: "Hidden" }[c.status];
+        when.append(flag);
+
+        const clue = document.createElement("div");
+        clue.className = "clue";
+        clue.textContent = `${c.clue} (${c.answer.length})`;
+
+        const meta = document.createElement("div");
+        meta.className = "meta";
+        const answer = document.createElement("span");
+        answer.className = "answer";
+        answer.textContent = c.answer;
+        const type = document.createElement("span");
+        type.className = "pill";
+        type.textContent = c.type;
+        const res = document.createElement("span");
+        res.className = "result";
+        res.textContent = c.status === "approved"
+          ? `${num(c.plays)} played · ${pct(c.solved, c.plays)} solved`
+          : c.explanation;
+        meta.append(answer, type, res);
+
+        const actions = document.createElement("div");
+        actions.className = "actions";
+        const act = (label, action, cls = "") => {
+          const b = document.createElement("button");
+          b.type = "button";
+          b.className = `mini ${cls}`;
+          b.textContent = label;
+          b.addEventListener("click", () => moderate(action, c));
+          return b;
+        };
+        if (c.status !== "approved") actions.append(act("Approve", "approve", "ok"));
+        if (c.status === "approved") actions.append(act("Hide", "hide"));
+        actions.append(act("Reject", "reject", "danger"));
+
+        li.append(when, actions, clue, meta);
+        list.append(li);
+      }
+    }
+
+    async function moderate(action, c) {
+      if (action === "reject" && !confirm(`Reject "${c.clue}" by ${c.author}? It disappears for good.`)) return;
+      try {
+        const { cases } = await api("/api/admin/community", {
+          method: "POST",
+          headers: { "content-type": "application/json" },
+          body: JSON.stringify({ action, id: c.id }),
+        });
+        renderCommunity(cases);
+      } catch (err) {
+        if (err.message !== "signed out") alert(err.message);
       }
     }
 

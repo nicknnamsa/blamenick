@@ -48,6 +48,7 @@
   <main class="column">
     <h1 class="title">Killer Clues<svg class="drop" viewBox="0 0 24 32" aria-hidden="true"><path d="M12 2C12 2 3 13.5 3 20a9 9 0 0 0 18 0C21 13.5 12 2 12 2z" fill="#9e3b2f" stroke="#26232b" stroke-width="2" stroke-linejoin="round"/><path d="M8 20a4 4 0 0 0 3 4" fill="none" stroke="#fdfcfe" stroke-width="2" stroke-linecap="round" opacity="0.7"/></svg></h1>
     <p class="case-line" id="case-line">Opening the case file…</p>
+    <a class="back-today" href="/killer-clues/">← Back to today's case</a>
 
     <section class="clue-card" id="clue-card" aria-live="polite">
       <span class="folder-tab">
@@ -105,8 +106,18 @@
         <div><span class="big" id="streak">0</span><span>day streak</span></div>
         <div><span class="big" id="countdown">--:--:--</span><span>until the next case</span></div>
       </div>
+      <a class="more-cases" href="/killer-clues/community/">
+        <span class="more-kicker">Can't wait for tomorrow?</span>
+        <strong>Try a case from the community</strong>
+        <span>Written by other players. Or write your own.</span>
+      </a>
       <a class="btn" href="/">More games from Nick</a>
     </section>
+
+    <a class="community-link" href="/killer-clues/community/">
+      <span>Community cases</span>
+      <span class="community-link-sub">Play ones written by other players, or write your own →</span>
+    </a>
   </main>
 
   <aside class="side side-right" aria-label="Your casebook">
@@ -129,6 +140,17 @@
         <span class="big" id="side-countdown">--:--:--</span>
       </div>
       <p class="stats-note">Saved in this browser only.</p>
+
+      <section class="community" aria-labelledby="community-title">
+        <div class="community-head">
+          <p class="side-label" id="community-title">From the community</p>
+          <a class="community-all" href="/killer-clues/community/">See all</a>
+        </div>
+        <ul class="community-list" id="community-list">
+          <li class="community-empty">Opening the files…</li>
+        </ul>
+        <a class="btn small write-case" href="/killer-clues/community/#write">Write a case</a>
+      </section>
     </div>
   </aside>
   </div>

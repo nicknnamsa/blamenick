@@ -50,12 +50,13 @@ const el = {
 
 function loadStore() {
   try {
-    return { games: {}, seenHelp: false, ...JSON.parse(localStorage.getItem(STORE_KEY)) };
+    return { games: {}, community: {}, seenHelp: false, ...JSON.parse(localStorage.getItem(STORE_KEY)) };
   } catch {
-    return { games: {}, seenHelp: false };
+    return { games: {}, community: {}, seenHelp: false };
   }
 }
 const store = loadStore();
+store.community ??= {};
 function saveStore() {
   try { localStorage.setItem(STORE_KEY, JSON.stringify(store)); } catch {}
 }
@@ -70,6 +71,15 @@ function visitorId() {
 function report({ leaving = false } = {}) {
   const visitor = visitorId();
   if (!visitor || !record || !game) return;
+  if (communityId) {
+    fetch("/api/killer-clues/community/result", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ visitor, id: communityId, status: game.status }),
+      keepalive: true,
+    }).catch(() => {});
+    return;
+  }
   const body = JSON.stringify({
     visitor,
     case: record.case,
@@ -112,6 +122,10 @@ function dayBefore(iso) {
   return isoDate(new Date(y, m - 1, d - 1));
 }
 const today = isoDate(new Date());
+
+// /killer-clues/?c=12 plays community case 12 instead of today's case.
+// Community games are saved separately, so they never touch the streak.
+const communityId = Number(new URLSearchParams(location.search).get("c")) || null;
 
 // ---- State for today ----
 
@@ -375,6 +389,7 @@ function summary() {
     marks: game.guesses.map((g) => g === answer),
     hints: game.hints,
     rank: rankFor(game),
+    author: communityId ? record.author : undefined,
   };
 }
 
@@ -498,6 +513,38 @@ function renderSides() {
   prepareCard();
 }
 
+// ---- From the community (side panel) ----
+
+async function loadCommunity() {
+  const list = $("community-list");
+  if (!list) return;
+  try {
+    const res = await fetch("/api/killer-clues/community?limit=4");
+    const { cases } = await res.json();
+    const shown = cases.filter((c) => c.id !== communityId).slice(0, 3);
+    list.innerHTML = "";
+    if (!shown.length) {
+      list.innerHTML = `<li class="community-empty">No community cases yet. Be the first to write one.</li>`;
+      return;
+    }
+    for (const c of shown) {
+      const mine = store.community[c.id];
+      const li = document.createElement("li");
+      li.innerHTML = `<a class="mini-case"><span class="mini-tab"></span><span class="mini-clue"></span><span class="mini-meta"></span></a>`;
+      const a = li.firstChild;
+      a.href = `/killer-clues/?c=${c.id}`;
+      a.querySelector(".mini-tab").textContent = `By ${c.author}`;
+      a.querySelector(".mini-clue").textContent = `${c.clue} (${c.length})`;
+      a.querySelector(".mini-meta").textContent = mine?.status === "solved" ? "Solved ✓"
+        : mine?.status === "gaveup" ? "Gone cold"
+        : c.plays ? `${c.plays} played` : "Fresh case";
+      list.append(li);
+    }
+  } catch {
+    list.innerHTML = `<li class="community-empty">Couldn't load the community cases.</li>`;
+  }
+}
+
 // ---- Countdown to local midnight ----
 
 let countdownTimer = null;
@@ -553,25 +600,38 @@ async function start() {
   renderSides();
   startCountdown();
 
+  loadCommunity();
+
   try {
-    const res = await fetch(`/api/killer-clues/today?date=${today}`);
+    const url = communityId
+      ? `/api/killer-clues/community/case?id=${communityId}`
+      : `/api/killer-clues/today?date=${today}`;
+    const res = await fetch(url);
     if (!res.ok) throw new Error((await res.json()).error);
     record = await res.json();
   } catch (err) {
     el.caseLine.textContent = "The case file is missing.";
-    el.clue.textContent = err.message || "Couldn't load today's case. Try again in a moment.";
+    el.clue.textContent = err.message || "Couldn't load the case. Try again in a moment.";
     return;
   }
 
-  const dateLabel = new Date(`${record.date}T12:00:00`).toLocaleDateString("en-GB", {
-    weekday: "long", day: "numeric", month: "long",
-  });
-  el.caseLine.textContent = dateLabel;
-  el.folderLabel.textContent = `Case ${record.case}`;
-
-  game = store.games[today] ??= { case: record.case, guesses: [], hints: 0, status: "playing", seconds: 0 };
+  if (communityId) {
+    record.case = communityId;
+    document.body.classList.add("community-mode");
+    document.title = `Community case by ${record.author} · Killer Clues`;
+    el.caseLine.textContent = `A community case by ${record.author}`;
+    el.folderLabel.textContent = "Community case";
+    game = store.community[communityId] ??= { guesses: [], hints: 0, status: "playing" };
+  } else {
+    const dateLabel = new Date(`${record.date}T12:00:00`).toLocaleDateString("en-GB", {
+      weekday: "long", day: "numeric", month: "long",
+    });
+    el.caseLine.textContent = dateLabel;
+    el.folderLabel.textContent = `Case ${record.case}`;
+    game = store.games[today] ??= { case: record.case, guesses: [], hints: 0, status: "playing", seconds: 0 };
+    startClock();
+  }
   saveStore();
-  startClock();
   counted.then(() => report());
 
   buildBoxes();

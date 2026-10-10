@@ -5,8 +5,11 @@
 //   GET  /api/admin/stats     site visitors + Killer Clues play stats
 //   GET  /api/admin/cases     every Killer Clues case, with its results
 //   POST /api/admin/cases     { action: "add" | "update" | "move" | "delete", ... }
+//   GET  /api/admin/community player-written cases, pending first
+//   POST /api/admin/community { action: "approve" | "hide" | "reject", id }
 
 import { isAdmin, login, logout } from "../admin.js";
+import { communityForAdmin, moderate } from "./community.js";
 import { ensureTable, utcDay, json } from "../visitors.js";
 import {
   ensureTables, allCases, cleanCase, addCase, updateCase, moveCase, deleteCase,
@@ -57,6 +60,19 @@ export const casesRoute = {
 
     if (result.error) return json(result, 409);
     return json(await caseList(env.DB));
+  }),
+};
+
+export const communityRoute = {
+  onRequestGet: guarded(async ({ env }) => json({ cases: await communityForAdmin(env.DB) })),
+  onRequestPost: guarded(async ({ request, env }) => {
+    let body = {};
+    try {
+      body = await request.json();
+    } catch {}
+    const result = await moderate(env.DB, body);
+    if (result.error) return json(result, 400);
+    return json({ cases: await communityForAdmin(env.DB) });
   }),
 };
 
